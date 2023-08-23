@@ -13,7 +13,6 @@ func BuildScope(p interface{}) (func(*gorm.DB) *gorm.DB, error) {
 	}
 	return func(db *gorm.DB) *gorm.DB {
 		for _, c := range conditions {
-			fmt.Printf("%v\n", *c)
 			switch c.op {
 			case constant.EqStr:
 				db = db.Where(fmt.Sprintf("`%s` %s ?", c.key, constant.Eq), c.val)
