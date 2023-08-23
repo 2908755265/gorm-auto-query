@@ -1,0 +1,51 @@
+package crud
+
+import (
+	gdi "github.com/2908755265/gorm-db-init"
+	"github.com/zeromicro/go-zero/core/conf"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"log"
+	"testing"
+	"time"
+)
+
+type testQuery struct {
+	ids     []int32 `scope:"op=in,name=id"`
+	cmdFlag string  `scope:"op=isnotnull"`
+}
+
+func TestFXLog(t *testing.T) {
+	var c config.Config
+	conf.MustLoad("../../../etc/api.yaml", &c)
+
+	gdi.Init(c.Db, &gorm.Config{
+		Logger: logger.New(log.Default(), logger.Config{
+			SlowThreshold:             200 * time.Millisecond,
+			Colorful:                  true,
+			IgnoreRecordNotFoundError: false,
+			LogLevel:                  logger.Info,
+		}),
+	})
+	tdb := gdi.Get(config.DBRTCloud)
+
+	where, err := scope.BuildScope(&testQuery{ids: []int32{71, 72, 73, 74, 75, 76, 77, 78, 79, 80}})
+	if err != nil {
+		panic(err)
+	}
+
+	q := NewQuery(&model.CmdCmdLog{}, tdb, 1, 10)
+	cnt, err := q.Count(where)
+	if err != nil {
+		panic(err)
+	}
+
+	println("total:", cnt)
+	logs, err := q.List(where)
+	if err != nil {
+		panic(err)
+	}
+	for _, m := range logs {
+		println(m.ID, m.Status, m.CmdRspMsg)
+	}
+}
