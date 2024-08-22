@@ -28,6 +28,6 @@ func (q *Query[Model]) Count(scopes ...func(*gorm.DB) *gorm.DB) (int64, error) {
 	return cnt, q.db.Model(q.m).Scopes(scopes...).Count(&cnt).Error
 }
 
-func NewQuery[Model interface{}](m *Model, db *gorm.DB, page, size int) *Query[Model] {
-	return &Query[Model]{m: m, db: db, maxSize: 50, page: page, size: size}
+func NewQuery[Model interface{}](m *Model, db *gorm.DB, page, size, maxSize int) *Query[Model] {
+	return &Query[Model]{m: m, db: db, maxSize: maxSize, page: page, size: size}
 }
